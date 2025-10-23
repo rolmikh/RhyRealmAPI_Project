@@ -1,0 +1,6 @@
+@RhyRealmAPI_Project_HostAddress = http://localhost:5033
+
+GET {{RhyRealmAPI_Project_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
