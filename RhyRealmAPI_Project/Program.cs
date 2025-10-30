@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using RhyRealmAPI_Project.Models;
+using RhyRealmAPI_Project.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<RhyRealm_Context>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("con")));
+
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
+builder.Services.AddTransient<EmailService>();
 
 // Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();

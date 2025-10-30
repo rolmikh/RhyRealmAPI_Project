@@ -89,6 +89,7 @@ namespace RhyRealmAPI_Project.Controllers
         }
 
         // DELETE: api/Albums/5
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAlbum(int id)
         {
@@ -124,10 +125,14 @@ namespace RhyRealmAPI_Project.Controllers
         }
 
         //SearchByName: api/Albums/
-        [HttpGet("Search/{nameAlbum}")]
-        public async Task<ActionResult<IEnumerable<Album>>> SearchAlbumByName(string nameAlbum)
+        [HttpGet("Search/{request}")]
+        public async Task<ActionResult<IEnumerable<Album>>> SearchAlbum(string request)
         {
-            var albums = await _context.Albums.Where(n => n.NameAlbum.Contains(nameAlbum)).ToListAsync();
+            if (request == null)
+            {
+                return NotFound();
+            }
+            var albums = await _context.Albums.Where(n => n.NameAlbum.Contains(request)).ToListAsync();
 
             if (albums == null)
             {
