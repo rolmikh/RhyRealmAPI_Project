@@ -20,16 +20,31 @@ namespace RhyRealmAPI_Project.Controllers
             _context = context;
         }
 
-        // GET: api/Albums
-        [HttpGet]
+        // GET: api/Albums for admin
+        [HttpGet("/ActiveAlbums")]
         public async Task<ActionResult<IEnumerable<Album>>> GetAlbums()
         {
             if (_context.Albums == null)
             {
                 return NotFound();
             }
+            var albums = await _context.Albums.Where(n => n.IsDeleted == true).ToListAsync();
 
-            return await _context.Albums.ToListAsync();
+
+            return albums;
+        }
+
+        // GET: api/Albums for admin archive
+        [HttpGet("/Archive")]
+        public async Task<ActionResult<IEnumerable<Album>>> GetAlbumsArchive()
+        {
+            if (_context.Albums == null)
+            {
+                return NotFound();
+            }
+
+            var albums = _context.Albums.Where(n => n.IsDeleted == false);
+            return await albums.ToListAsync();
         }
 
         // GET: api/Albums/5

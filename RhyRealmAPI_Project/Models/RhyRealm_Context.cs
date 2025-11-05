@@ -557,12 +557,12 @@ namespace RhyRealmAPI_Project.Models
                 entity.Property(e => e.SurnameUser)
                 .HasColumnName("Surname_User")
                 .HasMaxLength(60)
-                .IsRequired(true);
+                .IsRequired(false);
 
                 entity.Property(e => e.NameUser)
                 .HasColumnName("Name_User")
                 .HasMaxLength(60)
-                .IsRequired(true);
+                .IsRequired(false);
 
                 entity.Property(e => e.PatronymicNameUser)
                 .HasColumnName("Patronymic_Name_User")
@@ -573,7 +573,7 @@ namespace RhyRealmAPI_Project.Models
                 .HasColumnName("Date_Birth_User")
                 .HasColumnType("date")
                 .HasDefaultValueSql("GETDATE()")
-                .IsRequired(true);
+                .IsRequired(false);
 
 
                 entity.Property(e => e.EmailUser)
@@ -583,18 +583,18 @@ namespace RhyRealmAPI_Project.Models
 
                 entity.Property(e => e.PasswordUser)
                 .HasColumnName("Password_User")
-                .HasMaxLength(100)
+                .HasMaxLength(200)
                 .IsRequired(true);
 
 
                 entity.Property(e => e.SaltUser)
                 .HasColumnName("Salt_User")
-                .HasMaxLength(256)
+                .HasMaxLength(200)
                 .IsRequired(true);
 
                 entity.Property(e => e.BonusUser)
                 .HasColumnName("Bonus_User")
-                .IsRequired(true);
+                .IsRequired(false);
 
 
                 entity.Property(e => e.RoleId)
@@ -605,7 +605,7 @@ namespace RhyRealmAPI_Project.Models
                 entity.Property(e => e.PhotoUser)
                 .HasColumnName("Photo_User")
                 .HasMaxLength(256)
-                .IsRequired(true);
+                .IsRequired(false);
 
 
                 entity.HasOne(e => e.Role)
