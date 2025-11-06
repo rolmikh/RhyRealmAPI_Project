@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RhyRealmAPI_Project.DTO;
 using RhyRealmAPI_Project.Models;
 
 namespace RhyRealmAPI_Project.Controllers
@@ -20,20 +21,38 @@ namespace RhyRealmAPI_Project.Controllers
             _context = context;
         }
 
+
         // GET: api/Users
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDTO>>> GetUsers()
         {
             if (_context.Users == null)
             {
                 return NotFound();
             }
-            return await _context.Users.ToListAsync();
+
+            var user = await _context.Users
+                .Select(u => new UserDTO
+                {
+                    IdUser = u.IdUser,
+                    SurnameUser = u.SurnameUser,
+                    NameUser = u.NameUser,
+                    PatronymicNameUser = u.PatronymicNameUser,
+                    DateBirthUser = u.DateBirthUser,
+                    EmailUser = u.EmailUser,
+                    BonusUser = u.BonusUser,
+                    RoleId = u.RoleId,
+                    PhotoUser = u.PhotoUser
+
+                }).ToListAsync();
+
+            return user;
         }
 
         // GET: api/Users/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        // for clients
+        [HttpGet("Client/{id}")]
+        public async Task<ActionResult<UserPersonalPageClientDTO>> GetClient(int id)
         {
             var user = await _context.Users.FindAsync(id);
 
@@ -42,23 +61,92 @@ namespace RhyRealmAPI_Project.Controllers
                 return NotFound();
             }
 
-            return user;
+            var role = await _context.Roles.Where(n => n.NameRole == "USER").FirstAsync();
+
+            if (role == null)
+            {
+                return NotFound();
+            }
+
+            var userResult = new UserPersonalPageClientDTO
+            {
+                IdUser = user.IdUser,
+                SurnameUser = user.SurnameUser,
+                NameUser = user.NameUser,
+                PatronymicNameUser = user.PatronymicNameUser,
+                DateBirthUser = user.DateBirthUser,
+                EmailUser = user.EmailUser,
+                BonusUser = user.BonusUser,
+                PhotoUser = user.PhotoUser
+            };
+
+
+            return userResult;
+        }
+
+        // GET: api/Users/5
+        // for other user
+        [HttpGet("{id}")]
+        public async Task<ActionResult<UserPersonalPageDTO>> GetUser(int id)
+        {
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            //var role = await _context.Roles.Where(n => n.NameRole != "USER").FirstAsync();
+
+            //if (role.IdRole != user.RoleId)
+            //{
+            //    return NotFound();
+            //}
+
+            var userResult = new UserPersonalPageDTO
+            {
+                IdUser = user.IdUser,
+                SurnameUser = user.SurnameUser,
+                NameUser = user.NameUser,
+                PatronymicNameUser = user.PatronymicNameUser,
+                DateBirthUser = user.DateBirthUser,
+                EmailUser = user.EmailUser,
+                RoleId = user.RoleId,
+                PhotoUser = user.PhotoUser
+            };
+
+
+            return userResult;
         }
 
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user)
+        public async Task<IActionResult> PutUser(int id, [FromBody] UserUpdatePersonalPageDTO userDto)
         {
+            var user = await _context.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound();
+            }
+
             if (id != user.IdUser)
             {
                 return BadRequest();
             }
+            user.SurnameUser = userDto.SurnameUser;
+            user.NameUser = userDto.NameUser;
+            user.PatronymicNameUser = userDto.PatronymicNameUser;
+            user.DateBirthUser = userDto.DateBirthUser;
 
-            _context.Entry(user).State = EntityState.Modified;
+            //сделай подтверждение почты при ее изменении
+
+            user.EmailUser = userDto.EmailUser;
 
             try
             {
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -75,6 +163,8 @@ namespace RhyRealmAPI_Project.Controllers
 
             return NoContent();
         }
+
+
 
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

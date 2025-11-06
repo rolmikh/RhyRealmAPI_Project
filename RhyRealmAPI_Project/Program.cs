@@ -12,6 +12,9 @@ builder.Services.AddDbContext<RhyRealm_Context>(options => options.UseSqlServer(
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("Smtp"));
 builder.Services.AddTransient<EmailService>();
 
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<CacheService>();
+
 // Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
